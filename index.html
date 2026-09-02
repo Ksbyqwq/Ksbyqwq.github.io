@@ -3,416 +3,236 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UI 测试网页</title>
-    <!-- 使用 Inter 字体 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet" />
+    <title>UI 测试 · macOS 毛玻璃</title>
+    <!-- 引入 Tailwind CSS (支持任意值) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 自定义额外样式（补全 Tailwind 未覆盖的细节） -->
     <style>
-        /* 全局重置 & 主题变量 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #0f172a;
-            --text-secondary: #475569;
-            --border: #e2e8f0;
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-            --radius: 16px;
-            --transition: 0.25s ease;
-        }
-
-        [data-theme="dark"] {
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --text: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --border: #334155;
-            --primary: #60a5fa;
-            --primary-hover: #3b82f6;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-        }
-
+        /* 全局字体和基础重置 */
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            padding: 2rem 1.5rem;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: background var(--transition), color var(--transition);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #1c1c1e;
+            color: rgba(255, 255, 255, 0.95);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        .container {
-            max-width: 900px;
-            width: 100%;
+        /* 衬线标题 */
+        .font-serif {
+            font-family: Georgia, "Times New Roman", serif;
         }
 
-        /* 头部 */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 2.5rem;
+        /* 等宽代码 */
+        .font-mono {
+            font-family: "SF Mono", Menlo, Monaco, Consolas, monospace;
         }
 
-        .header h1 {
-            font-size: 1.9rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
+        /* 所有过渡仅作用于颜色，克制且平滑 */
+        * {
+            transition-property: background-color, border-color, color, fill, stroke;
+            transition-duration: 200ms;
+            transition-timing-function: ease-out;
         }
 
-        .header .subtitle {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
+        /* 自定义滚动条（可选） */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1c1c1e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3a3a3c;
+            border-radius: 6px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4a4a4c;
         }
 
-        /* 主题切换按钮 */
-        .theme-toggle {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            padding: 0.5rem 1.2rem;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--text);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all var(--transition);
-            box-shadow: var(--shadow);
+        /* 确保卡片内列表样式统一 */
+        .card-list li {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+            line-height: 1.6;
         }
 
-        .theme-toggle:hover {
-            border-color: var(--primary);
+        /* 强调色用于进度条和选中文本 */
+        .accent-color {
+            color: #0a84ff;
+        }
+        .bg-accent {
+            background-color: #0a84ff;
         }
 
-        /* 卡片网格 */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.6rem 1.8rem;
-            box-shadow: var(--shadow);
-            transition: all var(--transition);
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.08);
-        }
-
-        .card h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.8rem;
-        }
-
-        .card p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin-bottom: 1.2rem;
-        }
-
-        /* 表单元素 */
-        label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin-bottom: 0.3rem;
-            color: var(--text-secondary);
-        }
-
-        input[type="text"],
-        input[type="email"],
-        select {
-            width: 100%;
-            padding: 0.6rem 0.8rem;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: var(--bg);
-            color: var(--text);
-            font-size: 0.95rem;
-            transition: border var(--transition);
-            margin-bottom: 1rem;
-        }
-
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        }
-
-        /* 按钮组 */
-        .btn-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem;
-            margin: 0.5rem 0 0.2rem;
-        }
-
-        .btn {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            padding: 0.5rem 1.2rem;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--text);
-            cursor: pointer;
-            transition: all var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: #fff;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-hover);
-            border-color: var(--primary-hover);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border);
-        }
-
-        .btn-outline:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .btn-danger {
-            background: #ef4444;
-            border-color: #ef4444;
-            color: #fff;
-        }
-
-        .btn-danger:hover {
-            background: #dc2626;
-            border-color: #dc2626;
-        }
-
-        .btn:active {
-            transform: scale(0.96);
-        }
-
-        /* 交互反馈区 */
+        /* 反馈区域的左侧边框（由 Tailwind 的 border-l-4 实现） */
         .feedback {
-            margin-top: 1rem;
-            padding: 0.8rem 1rem;
-            background: var(--bg);
-            border-radius: 12px;
-            border-left: 4px solid var(--primary);
-            font-size: 0.95rem;
-            min-height: 3rem;
-            transition: all var(--transition);
+            border-left-width: 4px;
+            border-left-color: #0a84ff;
         }
-
         .feedback.success {
-            border-left-color: #22c55e;
+            border-left-color: #30d158;
         }
-
         .feedback.error {
-            border-left-color: #ef4444;
-        }
-
-        /* 颜色展示块 */
-        .color-swatches {
-            display: flex;
-            gap: 0.6rem;
-            flex-wrap: wrap;
-            margin: 0.8rem 0;
-        }
-
-        .swatch {
-            width: 36px;
-            height: 36px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
-
-        /* 进度条 */
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: var(--bg);
-            border-radius: 20px;
-            overflow: hidden;
-            margin: 0.8rem 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: var(--primary);
-            border-radius: 20px;
-            transition: width 0.6s ease;
-        }
-
-        /* 页脚 */
-        .footer {
-            margin-top: 3rem;
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            border-top: 1px solid var(--border);
-            padding-top: 2rem;
-        }
-
-        /* 响应式 */
-        @media (max-width: 500px) {
-            .header h1 {
-                font-size: 1.5rem;
-            }
-            .grid {
-                grid-template-columns: 1fr;
-            }
+            border-left-color: #ff453a;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- 头部 -->
-        <header class="header">
-            <div>
-                <h1>🧪 UI 测试面板</h1>
-                <div class="subtitle">用于验证样式、交互与响应式布局</div>
-            </div>
-            <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
-                <span id="themeIcon">🌙</span> <span id="themeLabel">深色</span>
-            </button>
-        </header>
 
-        <!-- 卡片网格 -->
-        <div class="grid">
-            <!-- 卡片 1: 按钮交互 -->
-            <div class="card">
-                <h3>🔘 按钮交互</h3>
-                <p>点击下方按钮触发反馈信息</p>
-                <div class="btn-group">
-                    <button class="btn btn-primary" id="clickBtn">点击我</button>
-                    <button class="btn btn-outline" id="resetBtn">重置</button>
-                    <button class="btn btn-danger" id="errorBtn">❌ 出错</button>
-                </div>
-                <div class="feedback" id="feedbackMessage">等待操作…</div>
-            </div>
+    <!-- 主容器：背景最深色，内容居中 -->
+    <div class="min-h-screen bg-[#1c1c1e] text-white/95 p-4 md:p-6 flex flex-col items-center">
+        <div class="w-full max-w-6xl">
 
-            <!-- 卡片 2: 表单元素（包含优化后的下拉框） -->
-            <div class="card">
-                <h3>📝 表单元素</h3>
-                <p>输入框、选择器和占位展示</p>
-                <label for="nameInput">姓名</label>
-                <input type="text" id="nameInput" placeholder="例如：张三" />
-
-                <label for="emailInput">邮箱</label>
-                <input type="email" id="emailInput" placeholder="example@mail.com" />
-
-                <label for="roleSelect">角色</label>
-                <select id="roleSelect">
-                    <option value="" disabled selected>-- 请选择 --</option>
-                    <option value="user">普通用户</option>
-                    <option value="admin">管理员</option>
-                    <option value="guest">访客</option>
-                </select>
-                <!-- 实时显示选中的角色 -->
-                <div style="font-size:0.85rem; color:var(--text-secondary); margin-top:-0.3rem; margin-bottom:0.8rem;">
-                    👉 当前选择：<span id="selectedRoleDisplay" style="font-weight:500; color:var(--primary);">无</span>
-                </div>
-
-                <div class="btn-group">
-                    <button class="btn btn-primary" id="submitFormBtn">提交表单</button>
-                </div>
-                <div class="feedback" id="formFeedback">填写后点击提交</div>
-            </div>
-
-            <!-- 卡片 3: 视觉组件 -->
-            <div class="card">
-                <h3>🎨 视觉元素</h3>
-                <p>颜色样本与进度条</p>
-                <div class="color-swatches">
-                    <span class="swatch" style="background:#3b82f6;"></span>
-                    <span class="swatch" style="background:#22c55e;"></span>
-                    <span class="swatch" style="background:#ef4444;"></span>
-                    <span class="swatch" style="background:#f59e0b;"></span>
-                    <span class="swatch" style="background:#8b5cf6;"></span>
-                </div>
+            <!-- 头部 -->
+            <header class="flex flex-wrap items-center justify-between gap-4 mb-8 pb-4 border-b border-white/8">
                 <div>
-                    <label>下载进度（模拟）</label>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill" style="width: 30%;"></div>
+                    <h1 class="font-serif text-2xl md:text-3xl font-semibold text-white/95 tracking-tight">
+                        🧪 UI 测试面板
+                    </h1>
+                    <p class="text-white/60 text-sm mt-1">macOS 毛玻璃风格 · 暗色桌面体验</p>
+                </div>
+                <!-- 此处不提供主题切换，保持纯暗色 -->
+                <div class="text-white/40 text-xs flex items-center gap-2">
+                    <span class="inline-block w-2 h-2 rounded-full bg-accent"></span>
+                    系统强调色 #0a84ff
+                </div>
+            </header>
+
+            <!-- 卡片网格 第一行 (三列) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+
+                <!-- 卡片 1: 按钮交互 -->
+                <div class="bg-[#2c2c2e] border border-white/8 rounded-xl p-4 md:p-5 shadow-[0_1px_0_rgba(255,255,255,0.05)]">
+                    <h3 class="font-serif text-lg md:text-xl font-semibold text-white/95 mb-1">🔘 按钮交互</h3>
+                    <p class="text-white/60 text-sm mb-4">点击按钮触发反馈</p>
+                    <div class="flex flex-wrap gap-2">
+                        <button id="clickBtn" class="bg-[#3a3a3c] text-white/90 rounded-lg px-4 py-2 text-sm font-medium hover:bg-white/10 transition-colors duration-200">
+                            点击我
+                        </button>
+                        <button id="resetBtn" class="bg-transparent text-white/70 rounded-lg px-4 py-2 text-sm font-medium border border-white/10 hover:bg-white/5 transition-colors duration-200">
+                            重置
+                        </button>
+                        <button id="errorBtn" class="bg-transparent text-white/70 rounded-lg px-4 py-2 text-sm font-medium border border-white/10 hover:bg-white/5 transition-colors duration-200">
+                            ❌ 出错
+                        </button>
                     </div>
-                    <div class="btn-group">
-                        <button class="btn btn-outline" id="progressBtn">▶ 增加进度</button>
-                        <button class="btn btn-outline" id="resetProgressBtn">↺ 重置</button>
+                    <div id="feedbackMessage" class="feedback bg-[#1c1c1e] rounded-lg px-4 py-3 mt-4 text-sm text-white/80 min-h-[3rem] border border-white/5">
+                        等待操作…
+                    </div>
+                </div>
+
+                <!-- 卡片 2: 表单元素 (含优化下拉框) -->
+                <div class="bg-[#2c2c2e] border border-white/8 rounded-xl p-4 md:p-5 shadow-[0_1px_0_rgba(255,255,255,0.05)]">
+                    <h3 class="font-serif text-lg md:text-xl font-semibold text-white/95 mb-1">📝 表单元素</h3>
+                    <p class="text-white/60 text-sm mb-4">输入框、下拉选择</p>
+                    <div class="space-y-3">
+                        <div>
+                            <label for="nameInput" class="block text-white/70 text-xs font-medium mb-1">姓名</label>
+                            <input type="text" id="nameInput" placeholder="例如：张三"
+                                   class="w-full bg-[#1c1c1e] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/90 placeholder-white/30 focus:outline-none focus:border-white/25 transition-colors duration-200" />
+                        </div>
+                        <div>
+                            <label for="emailInput" class="block text-white/70 text-xs font-medium mb-1">邮箱</label>
+                            <input type="email" id="emailInput" placeholder="example@mail.com"
+                                   class="w-full bg-[#1c1c1e] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/90 placeholder-white/30 focus:outline-none focus:border-white/25 transition-colors duration-200" />
+                        </div>
+                        <div>
+                            <label for="roleSelect" class="block text-white/70 text-xs font-medium mb-1">角色</label>
+                            <select id="roleSelect"
+                                    class="w-full bg-[#1c1c1e] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/90 focus:outline-none focus:border-white/25 transition-colors duration-200 appearance-none">
+                                <option value="" disabled selected>-- 请选择 --</option>
+                                <option value="user">普通用户</option>
+                                <option value="admin">管理员</option>
+                                <option value="guest">访客</option>
+                            </select>
+                            <div class="text-white/50 text-xs mt-1 flex items-center gap-1">
+                                👉 当前选择：<span id="selectedRoleDisplay" class="text-white/90 font-medium">无</span>
+                            </div>
+                        </div>
+                        <button id="submitFormBtn" class="bg-[#3a3a3c] text-white/90 rounded-lg px-4 py-2 text-sm font-medium hover:bg-white/10 transition-colors duration-200 w-full">
+                            提交表单
+                        </button>
+                        <div id="formFeedback" class="feedback bg-[#1c1c1e] rounded-lg px-4 py-3 text-sm text-white/80 min-h-[3rem] border border-white/5">
+                            填写后点击提交
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 卡片 3: 视觉元素 (颜色样本 + 进度条) -->
+                <div class="bg-[#2c2c2e] border border-white/8 rounded-xl p-4 md:p-5 shadow-[0_1px_0_rgba(255,255,255,0.05)]">
+                    <h3 class="font-serif text-lg md:text-xl font-semibold text-white/95 mb-1">🎨 视觉元素</h3>
+                    <p class="text-white/60 text-sm mb-4">颜色样本与进度条</p>
+                    <div class="flex gap-2 flex-wrap mb-3">
+                        <span class="w-8 h-8 rounded-lg border border-white/10" style="background:#0a84ff;"></span>
+                        <span class="w-8 h-8 rounded-lg border border-white/10" style="background:#30d158;"></span>
+                        <span class="w-8 h-8 rounded-lg border border-white/10" style="background:#ff453a;"></span>
+                        <span class="w-8 h-8 rounded-lg border border-white/10" style="background:#ffd60a;"></span>
+                        <span class="w-8 h-8 rounded-lg border border-white/10" style="background:#bf5af2;"></span>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-white/50 text-xs mb-1">
+                            <span>下载进度</span>
+                            <span id="progressLabel">30%</span>
+                        </div>
+                        <div class="w-full h-1.5 bg-[#1c1c1e] rounded-full overflow-hidden">
+                            <div id="progressFill" class="h-full bg-accent rounded-full transition-all duration-200 ease-out" style="width:30%;"></div>
+                        </div>
+                        <div class="flex gap-2 mt-3">
+                            <button id="progressBtn" class="bg-[#3a3a3c] text-white/90 rounded-lg px-3 py-1.5 text-xs font-medium hover:bg-white/10 transition-colors duration-200 flex-1">
+                                ▶ 增加
+                            </button>
+                            <button id="resetProgressBtn" class="bg-transparent text-white/70 rounded-lg px-3 py-1.5 text-xs font-medium border border-white/10 hover:bg-white/5 transition-colors duration-200 flex-1">
+                                ↺ 重置
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 额外一行卡片 -->
-        <div class="grid">
-            <div class="card">
-                <h3>📦 卡片内容</h3>
-                <p>这是一张独立的卡片，展示文本、列表和徽章效果。</p>
-                <ul style="padding-left:1.2rem; color:var(--text-secondary); margin-bottom:0.5rem;">
-                    <li>• 支持列表样式</li>
-                    <li>• 响应式网格布局</li>
-                    <li>• 暗色主题适配</li>
-                </ul>
-                <span style="background:var(--primary); color:#fff; padding:0.15rem 0.7rem; border-radius:40px; font-size:0.75rem; font-weight:600; display:inline-block;">测试中</span>
-            </div>
-            <div class="card">
-                <h3>🔄 状态切换</h3>
-                <p>点击下方按钮切换卡片状态（模拟加载）</p>
-                <div class="btn-group">
-                    <button class="btn btn-primary" id="toggleStateBtn">切换状态</button>
+            <!-- 卡片网格 第二行 (两列) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6">
+                <!-- 卡片 4: 列表与徽章 -->
+                <div class="bg-[#2c2c2e] border border-white/8 rounded-xl p-4 md:p-5 shadow-[0_1px_0_rgba(255,255,255,0.05)]">
+                    <h3 class="font-serif text-lg md:text-xl font-semibold text-white/95 mb-1">📦 卡片内容</h3>
+                    <p class="text-white/60 text-sm mb-3">列表样式与状态标签</p>
+                    <ul class="card-list space-y-1.5 pl-1">
+                        <li>• 响应式网格布局</li>
+                        <li>• 暗色主题适配</li>
+                        <li>• 1px 半透明边框</li>
+                    </ul>
+                    <span class="inline-block mt-3 bg-[#3a3a3c] text-white/80 text-[0.65rem] font-medium px-3 py-0.5 rounded-full border border-white/5">
+                        测试中
+                    </span>
                 </div>
-                <div class="feedback" id="stateFeedback">当前状态：正常</div>
-            </div>
-        </div>
 
-        <!-- 页脚 -->
-        <footer class="footer">
-            <p>UI 测试网页 · 部署于 GitHub Pages · 2026</p>
-        </footer>
+                <!-- 卡片 5: 状态切换 -->
+                <div class="bg-[#2c2c2e] border border-white/8 rounded-xl p-4 md:p-5 shadow-[0_1px_0_rgba(255,255,255,0.05)]">
+                    <h3 class="font-serif text-lg md:text-xl font-semibold text-white/95 mb-1">🔄 状态切换</h3>
+                    <p class="text-white/60 text-sm mb-4">点击切换模拟状态</p>
+                    <button id="toggleStateBtn" class="bg-[#3a3a3c] text-white/90 rounded-lg px-4 py-2 text-sm font-medium hover:bg-white/10 transition-colors duration-200">
+                        切换状态
+                    </button>
+                    <div id="stateFeedback" class="feedback bg-[#1c1c1e] rounded-lg px-4 py-3 mt-4 text-sm text-white/80 min-h-[3rem] border border-white/5">
+                        当前状态：正常
+                    </div>
+                </div>
+            </div>
+
+            <!-- 页脚 -->
+            <footer class="mt-12 pt-6 border-t border-white/8 text-white/40 text-xs text-center">
+                <p>UI 测试 · macOS 毛玻璃风格 · 部署于 GitHub Pages · 2026</p>
+            </footer>
+
+        </div>
     </div>
 
+    <!-- JavaScript 交互逻辑 -->
     <script>
         (function() {
             "use strict";
 
-            // ---------- DOM 引用 ----------
-            const themeToggle = document.getElementById('themeToggle');
-            const themeIcon = document.getElementById('themeIcon');
-            const themeLabel = document.getElementById('themeLabel');
-
+            // DOM 元素
             const feedback = document.getElementById('feedbackMessage');
             const clickBtn = document.getElementById('clickBtn');
             const resetBtn = document.getElementById('resetBtn');
@@ -426,36 +246,17 @@
             const selectedRoleDisplay = document.getElementById('selectedRoleDisplay');
 
             const progressFill = document.getElementById('progressFill');
+            const progressLabel = document.getElementById('progressLabel');
             const progressBtn = document.getElementById('progressBtn');
             const resetProgressBtn = document.getElementById('resetProgressBtn');
 
             const toggleStateBtn = document.getElementById('toggleStateBtn');
             const stateFeedback = document.getElementById('stateFeedback');
 
-            // ---------- 主题切换 ----------
-            let currentTheme = localStorage.getItem('theme') || 'light';
-            const setTheme = (theme) => {
-                document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
-                currentTheme = theme;
-                localStorage.setItem('theme', theme);
-                if (theme === 'dark') {
-                    themeIcon.textContent = '☀️';
-                    themeLabel.textContent = '浅色';
-                } else {
-                    themeIcon.textContent = '🌙';
-                    themeLabel.textContent = '深色';
-                }
-            };
-            setTheme(currentTheme);
-
-            themeToggle.addEventListener('click', () => {
-                setTheme(currentTheme === 'light' ? 'dark' : 'light');
-            });
-
             // ---------- 按钮交互 ----------
             const setFeedback = (msg, type = '') => {
                 feedback.textContent = msg;
-                feedback.className = 'feedback' + (type ? ' ' + type : '');
+                feedback.className = 'feedback bg-[#1c1c1e] rounded-lg px-4 py-3 text-sm text-white/80 min-h-[3rem] border border-white/5' + (type ? ' ' + type : '');
             };
 
             clickBtn.addEventListener('click', () => {
@@ -485,22 +286,21 @@
                 const email = emailInput.value.trim() || '未填写';
                 const roleValue = roleSelect.value;
 
-                // 校验是否选择了有效角色
                 if (!roleValue) {
                     formFeedback.textContent = '⚠️ 请先选择一个角色！';
-                    formFeedback.className = 'feedback error';
+                    formFeedback.className = 'feedback bg-[#1c1c1e] rounded-lg px-4 py-3 text-sm text-white/80 min-h-[3rem] border border-white/5 error';
                     return;
                 }
 
                 const roleText = roleSelect.options[roleSelect.selectedIndex].text;
                 formFeedback.textContent = `📋 提交成功：${name} (${roleText})，邮箱 ${email}`;
-                formFeedback.className = 'feedback success';
+                formFeedback.className = 'feedback bg-[#1c1c1e] rounded-lg px-4 py-3 text-sm text-white/80 min-h-[3rem] border border-white/5 success';
             });
 
-            // 输入时清空反馈样式（辅助）
+            // 输入时重置反馈样式（辅助）
             [nameInput, emailInput].forEach(el => {
                 el.addEventListener('input', () => {
-                    formFeedback.className = 'feedback';
+                    formFeedback.className = 'feedback bg-[#1c1c1e] rounded-lg px-4 py-3 text-sm text-white/80 min-h-[3rem] border border-white/5';
                 });
             });
 
@@ -509,10 +309,11 @@
             const updateProgress = (value) => {
                 progress = Math.min(100, Math.max(0, value));
                 progressFill.style.width = progress + '%';
+                progressLabel.textContent = progress + '%';
                 if (progress >= 100) {
-                    progressFill.style.background = '#22c55e';
+                    progressFill.style.background = '#30d158'; // 完成绿色
                 } else {
-                    progressFill.style.background = 'var(--primary)';
+                    progressFill.style.background = '#0a84ff';
                 }
             };
 
@@ -531,507 +332,19 @@
                 stateIndex = (stateIndex + 1) % states.length;
                 const s = states[stateIndex];
                 stateFeedback.textContent = '当前状态：' + s;
-                if (s === '加载中') {
-                    stateFeedback.className = 'feedback';
-                } else if (s === '已完成') {
-                    stateFeedback.className = 'feedback success';
+                stateFeedback.className = 'feedback bg-[#1c1c1e] rounded-lg px-4 py-3 text-sm text-white/80 min-h-[3rem] border border-white/5';
+                if (s === '已完成') {
+                    stateFeedback.classList.add('success');
                 } else if (s === '暂停') {
-                    stateFeedback.className = 'feedback error';
-                } else {
-                    stateFeedback.className = 'feedback';
+                    stateFeedback.classList.add('error');
                 }
+                // 加载中或正常只保留基础样式
             });
 
-            console.log('UI 测试网页已加载。欢迎！');
-        })();
-    </script>
-</body>
-</html>            --border: #334155;
-            --primary: #60a5fa;
-            --primary-hover: #3b82f6;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-        }
+            // 初始化进度显示
+            updateProgress(30);
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            padding: 2rem 1.5rem;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: background var(--transition), color var(--transition);
-        }
-
-        .container {
-            max-width: 900px;
-            width: 100%;
-        }
-
-        /* 头部 */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 2.5rem;
-        }
-
-        .header h1 {
-            font-size: 1.9rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-        }
-
-        .header .subtitle {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        /* 主题切换按钮 */
-        .theme-toggle {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            padding: 0.5rem 1.2rem;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--text);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all var(--transition);
-            box-shadow: var(--shadow);
-        }
-
-        .theme-toggle:hover {
-            border-color: var(--primary);
-        }
-
-        /* 卡片网格 */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.6rem 1.8rem;
-            box-shadow: var(--shadow);
-            transition: all var(--transition);
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.08);
-        }
-
-        .card h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.8rem;
-        }
-
-        .card p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin-bottom: 1.2rem;
-        }
-
-        /* 表单元素 */
-        label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin-bottom: 0.3rem;
-            color: var(--text-secondary);
-        }
-
-        input[type="text"],
-        input[type="email"],
-        select {
-            width: 100%;
-            padding: 0.6rem 0.8rem;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: var(--bg);
-            color: var(--text);
-            font-size: 0.95rem;
-            transition: border var(--transition);
-            margin-bottom: 1rem;
-        }
-
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        }
-
-        /* 按钮组 */
-        .btn-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem;
-            margin: 0.5rem 0 0.2rem;
-        }
-
-        .btn {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            padding: 0.5rem 1.2rem;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--text);
-            cursor: pointer;
-            transition: all var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: #fff;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-hover);
-            border-color: var(--primary-hover);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border);
-        }
-
-        .btn-outline:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .btn-danger {
-            background: #ef4444;
-            border-color: #ef4444;
-            color: #fff;
-        }
-
-        .btn-danger:hover {
-            background: #dc2626;
-            border-color: #dc2626;
-        }
-
-        .btn:active {
-            transform: scale(0.96);
-        }
-
-        /* 交互反馈区 */
-        .feedback {
-            margin-top: 1rem;
-            padding: 0.8rem 1rem;
-            background: var(--bg);
-            border-radius: 12px;
-            border-left: 4px solid var(--primary);
-            font-size: 0.95rem;
-            min-height: 3rem;
-            transition: all var(--transition);
-        }
-
-        .feedback.success {
-            border-left-color: #22c55e;
-        }
-
-        .feedback.error {
-            border-left-color: #ef4444;
-        }
-
-        /* 颜色展示块 */
-        .color-swatches {
-            display: flex;
-            gap: 0.6rem;
-            flex-wrap: wrap;
-            margin: 0.8rem 0;
-        }
-
-        .swatch {
-            width: 36px;
-            height: 36px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
-
-        /* 进度条（模拟） */
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: var(--bg);
-            border-radius: 20px;
-            overflow: hidden;
-            margin: 0.8rem 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: var(--primary);
-            border-radius: 20px;
-            transition: width 0.6s ease;
-        }
-
-        /* 页脚 */
-        .footer {
-            margin-top: 3rem;
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            border-top: 1px solid var(--border);
-            padding-top: 2rem;
-        }
-
-        /* 响应式 */
-        @media (max-width: 500px) {
-            .header h1 {
-                font-size: 1.5rem;
-            }
-            .grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <!-- 头部 -->
-        <header class="header">
-            <div>
-                <h1>🧪 UI 测试面板</h1>
-                <div class="subtitle">用于验证样式、交互与响应式布局</div>
-            </div>
-            <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
-                <span id="themeIcon">🌙</span> <span id="themeLabel">深色</span>
-            </button>
-        </header>
-
-        <!-- 卡片网格 -->
-        <div class="grid">
-            <!-- 卡片 1: 按钮与反馈 -->
-            <div class="card">
-                <h3>🔘 按钮交互</h3>
-                <p>点击下方按钮触发反馈信息</p>
-                <div class="btn-group">
-                    <button class="btn btn-primary" id="clickBtn">点击我</button>
-                    <button class="btn btn-outline" id="resetBtn">重置</button>
-                    <button class="btn btn-danger" id="errorBtn">❌ 出错</button>
-                </div>
-                <div class="feedback" id="feedbackMessage">等待操作…</div>
-            </div>
-
-            <!-- 卡片 2: 表单输入 -->
-            <div class="card">
-                <h3>📝 表单元素</h3>
-                <p>输入框、选择器和占位展示</p>
-                <label for="nameInput">姓名</label>
-                <input type="text" id="nameInput" placeholder="例如：张三" />
-
-                <label for="emailInput">邮箱</label>
-                <input type="email" id="emailInput" placeholder="example@mail.com" />
-
-                <label for="roleSelect">角色</label>
-                <select id="roleSelect">
-                    <option value="user">普通用户</option>
-                    <option value="admin">管理员</option>
-                    <option value="guest">访客</option>
-                </select>
-
-                <div class="btn-group">
-                    <button class="btn btn-primary" id="submitFormBtn">提交表单</button>
-                </div>
-                <div class="feedback" id="formFeedback">填写后点击提交</div>
-            </div>
-
-            <!-- 卡片 3: 视觉组件 -->
-            <div class="card">
-                <h3>🎨 视觉元素</h3>
-                <p>颜色样本与进度条</p>
-                <div class="color-swatches">
-                    <span class="swatch" style="background:#3b82f6;"></span>
-                    <span class="swatch" style="background:#22c55e;"></span>
-                    <span class="swatch" style="background:#ef4444;"></span>
-                    <span class="swatch" style="background:#f59e0b;"></span>
-                    <span class="swatch" style="background:#8b5cf6;"></span>
-                </div>
-                <div>
-                    <label>下载进度（模拟）</label>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill" style="width: 30%;"></div>
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn btn-outline" id="progressBtn">▶ 增加进度</button>
-                        <button class="btn btn-outline" id="resetProgressBtn">↺ 重置</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 额外的一行卡片：展示更多布局 -->
-        <div class="grid">
-            <div class="card">
-                <h3>📦 卡片内容</h3>
-                <p>这是一张独立的卡片，展示文本、列表和徽章效果。</p>
-                <ul style="padding-left:1.2rem; color:var(--text-secondary); margin-bottom:0.5rem;">
-                    <li>• 支持列表样式</li>
-                    <li>• 响应式网格布局</li>
-                    <li>• 暗色主题适配</li>
-                </ul>
-                <span style="background:var(--primary); color:#fff; padding:0.15rem 0.7rem; border-radius:40px; font-size:0.75rem; font-weight:600; display:inline-block;">测试中</span>
-            </div>
-            <div class="card">
-                <h3>🔄 状态切换</h3>
-                <p>点击下方按钮切换卡片状态（模拟加载）</p>
-                <div class="btn-group">
-                    <button class="btn btn-primary" id="toggleStateBtn">切换状态</button>
-                </div>
-                <div class="feedback" id="stateFeedback">当前状态：正常</div>
-            </div>
-        </div>
-
-        <!-- 页脚 -->
-        <footer class="footer">
-            <p>UI 测试网页 · 部署于 GitHub Pages · 2026</p>
-        </footer>
-    </div>
-
-    <script>
-        (function() {
-            "use strict";
-
-            // ---------- DOM 引用 ----------
-            const themeToggle = document.getElementById('themeToggle');
-            const themeIcon = document.getElementById('themeIcon');
-            const themeLabel = document.getElementById('themeLabel');
-
-            const feedback = document.getElementById('feedbackMessage');
-            const clickBtn = document.getElementById('clickBtn');
-            const resetBtn = document.getElementById('resetBtn');
-            const errorBtn = document.getElementById('errorBtn');
-
-            const formFeedback = document.getElementById('formFeedback');
-            const submitFormBtn = document.getElementById('submitFormBtn');
-            const nameInput = document.getElementById('nameInput');
-            const emailInput = document.getElementById('emailInput');
-            const roleSelect = document.getElementById('roleSelect');
-
-            const progressFill = document.getElementById('progressFill');
-            const progressBtn = document.getElementById('progressBtn');
-            const resetProgressBtn = document.getElementById('resetProgressBtn');
-
-            const toggleStateBtn = document.getElementById('toggleStateBtn');
-            const stateFeedback = document.getElementById('stateFeedback');
-
-            // ---------- 主题切换 ----------
-            let currentTheme = localStorage.getItem('theme') || 'light';
-            const setTheme = (theme) => {
-                document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
-                currentTheme = theme;
-                localStorage.setItem('theme', theme);
-                if (theme === 'dark') {
-                    themeIcon.textContent = '☀️';
-                    themeLabel.textContent = '浅色';
-                } else {
-                    themeIcon.textContent = '🌙';
-                    themeLabel.textContent = '深色';
-                }
-            };
-            setTheme(currentTheme);
-
-            themeToggle.addEventListener('click', () => {
-                setTheme(currentTheme === 'light' ? 'dark' : 'light');
-            });
-
-            // ---------- 按钮交互 ----------
-            const setFeedback = (msg, type = '') => {
-                feedback.textContent = msg;
-                feedback.className = 'feedback' + (type ? ' ' + type : '');
-            };
-
-            clickBtn.addEventListener('click', () => {
-                setFeedback('✅ 按钮被点击！当前时间：' + new Date().toLocaleTimeString(), 'success');
-            });
-
-            resetBtn.addEventListener('click', () => {
-                setFeedback('🔄 已重置反馈信息', '');
-            });
-
-            errorBtn.addEventListener('click', () => {
-                setFeedback('❌ 模拟错误：发生了异常情况', 'error');
-            });
-
-            // ---------- 表单提交 ----------
-            submitFormBtn.addEventListener('click', () => {
-                const name = nameInput.value.trim() || '未填写';
-                const email = emailInput.value.trim() || '未填写';
-                const role = roleSelect.options[roleSelect.selectedIndex].text;
-                formFeedback.textContent = `📋 提交成功：${name} (${role})，邮箱 ${email}`;
-                formFeedback.className = 'feedback success';
-            });
-
-            // 输入时清空反馈样式（可选）
-            [nameInput, emailInput, roleSelect].forEach(el => {
-                el.addEventListener('input', () => {
-                    formFeedback.className = 'feedback';
-                });
-            });
-
-            // ---------- 进度条 ----------
-            let progress = 30;
-            const updateProgress = (value) => {
-                progress = Math.min(100, Math.max(0, value));
-                progressFill.style.width = progress + '%';
-                if (progress >= 100) {
-                    progressFill.style.background = '#22c55e';
-                } else {
-                    progressFill.style.background = 'var(--primary)';
-                }
-            };
-
-            progressBtn.addEventListener('click', () => {
-                updateProgress(progress + 15);
-            });
-
-            resetProgressBtn.addEventListener('click', () => {
-                updateProgress(0);
-            });
-
-            // ---------- 状态切换 ----------
-            let stateIndex = 0;
-            const states = ['正常', '加载中', '已完成', '暂停'];
-            toggleStateBtn.addEventListener('click', () => {
-                stateIndex = (stateIndex + 1) % states.length;
-                const s = states[stateIndex];
-                stateFeedback.textContent = '当前状态：' + s;
-                if (s === '加载中') {
-                    stateFeedback.className = 'feedback';
-                } else if (s === '已完成') {
-                    stateFeedback.className = 'feedback success';
-                } else if (s === '暂停') {
-                    stateFeedback.className = 'feedback error';
-                } else {
-                    stateFeedback.className = 'feedback';
-                }
-            });
-
-            // ---------- 初始状态提示 ----------
-            console.log('UI 测试网页已加载。欢迎！');
+            console.log('macOS 毛玻璃 UI 测试已加载。');
         })();
     </script>
 </body>
