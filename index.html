@@ -1,351 +1,297 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UI 测试 · macOS 毛玻璃</title>
-    <!-- 引入 Tailwind CSS (支持任意值) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 自定义额外样式（补全 Tailwind 未覆盖的细节） -->
-    <style>
-        /* 全局字体和基础重置 */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #1c1c1e;
-            color: rgba(255, 255, 255, 0.95);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* 衬线标题 */
-        .font-serif {
-            font-family: Georgia, "Times New Roman", serif;
-        }
-
-        /* 等宽代码 */
-        .font-mono {
-            font-family: "SF Mono", Menlo, Monaco, Consolas, monospace;
-        }
-
-        /* 所有过渡仅作用于颜色，克制且平滑 */
-        * {
-            transition-property: background-color, border-color, color, fill, stroke;
-            transition-duration: 200ms;
-            transition-timing-function: ease-out;
-        }
-
-        /* 自定义滚动条（可选） */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1c1c1e;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #3a3a3c;
-            border-radius: 6px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #4a4a4c;
-        }
-
-        /* 确保卡片内列表样式统一 */
-        .card-list li {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.875rem;
-            line-height: 1.6;
-        }
-
-        /* 强调色用于进度条和选中文本 */
-        .accent-color {
-            color: #0a84ff;
-        }
-        .bg-accent {
-            background-color: #0a84ff;
-        }
-
-        /* 反馈区域的左侧边框（由 Tailwind 的 border-l-4 实现） */
-        .feedback {
-            border-left-width: 4px;
-            border-left-color: #0a84ff;
-        }
-        .feedback.success {
-            border-left-color: #30d158;
-        }
-        .feedback.error {
-            border-left-color: #ff453a;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mystic AI</title>
+<style>
+:root{--bg:#0a0e1a;--surface:#111627;--text:#e4e4e7;--text2:#6b7280;--text3:#4b5563;--primary:#3399ff;--primary-hover:#1a7fe0;--primary-bg:#0d2245;--border:#1e2235;--success:#4ade80;--danger:#f87171;--warning:#fbbf24;--radius:12px}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans CJK SC","PingFangSC-Regular",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{position:sticky;top:0;background:rgba(10,14,26,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 16px;z-index:50;display:flex;align-items:center;justify-content:space-between}
+.header-title{font-size:17px;font-weight:600;display:flex;align-items:center;gap:8px}
+.header-title .dot{width:8px;height:8px;border-radius:50%;background:var(--danger);animation:pulse 2s infinite}
+.header-title .dot.online{background:var(--success);animation:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.header-status{font-size:12px;color:var(--text2)}
+#chat{flex:1;overflow-y:auto;padding:16px;padding-bottom:80px;-webkit-overflow-scrolling:touch}
+.msg{margin-bottom:14px;display:flex;flex-direction:column;max-width:88%;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{align-self:flex-end}
+.msg.assistant{align-self:flex-start}
+.msg-bubble{padding:12px 16px;border-radius:var(--radius);font-size:14px;line-height:1.65;word-break:break-word;white-space:pre-wrap}
+.msg.user .msg-bubble{background:var(--primary);color:#fff;border-bottom-right-radius:4px}
+.msg.assistant .msg-bubble{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:4px}
+.msg-time{font-size:10px;color:var(--text3);margin-top:4px;padding:0 4px}
+.msg.user .msg-time{text-align:right}
+.typing{display:flex;gap:4px;padding:12px 16px}
+.typing span{width:6px;height:6px;background:var(--text3);border-radius:50%;animation:typing 1.4s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+.input-wrap{position:fixed;bottom:0;left:0;right:0;background:rgba(10,14,26,.95);backdrop-filter:blur(12px);border-top:1px solid var(--border);padding:10px 12px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;z-index:50}
+.input-wrap input{flex:1;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:15px;outline:none;-webkit-appearance:none}
+.input-wrap input:focus{border-color:var(--primary)}
+.input-wrap input:disabled{opacity:.5}
+.input-wrap button{padding:12px 18px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap}
+.input-wrap button:active{background:var(--primary-hover);transform:scale(.97)}
+.input-wrap button:disabled{opacity:.5;cursor:not-allowed}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);width:100%;max-width:380px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.modal h3{font-size:18px;margin-bottom:8px}
+.modal p{color:var(--text2);font-size:13px;margin-bottom:16px;line-height:1.5}
+.modal input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;outline:none;margin-bottom:12px;-webkit-appearance:none}
+.modal input:focus{border-color:var(--primary)}
+.modal .btn-row{display:flex;gap:8px;justify-content:flex-end}
+.modal button{padding:10px 18px;border-radius:10px;border:none;font-size:14px;cursor:pointer}
+.modal .btn-secondary{background:transparent;color:var(--text2);border:1px solid var(--border)}
+.modal .btn-primary{background:var(--primary);color:#fff}
+.empty{text-align:center;padding:60px 20px;color:var(--text2)}
+.empty-icon{font-size:48px;margin-bottom:12px;opacity:.5}
+pre{background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:12px;overflow-x:auto;font-size:12px;line-height:1.5;margin:8px 0}
+code{font-family:"SF Mono",Monaco,monospace;font-size:12px;background:rgba(255,255,255,.06);padding:2px 6px;border-radius:4px}
+pre code{background:none;padding:0}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+</style>
 </head>
 <body>
 
-    <!-- 主容器：背景最深色，内容居中 -->
-    <div class="min-h-screen bg-[#1c1c1e] text-white/95 p-4 md:p-6 flex flex-col items-center">
-        <div class="w-full max-w-6xl">
+<div class="header">
+  <div class="header-title">
+    <span id="status-dot" class="dot"></span>
+    <span>Mystic AI</span>
+  </div>
+  <div class="header-status" id="status-text">连接中...</div>
+</div>
 
-            <!-- 头部 -->
-            <header class="flex flex-wrap items-center justify-between gap-4 mb-8 pb-4 border-b border-white/8">
-                <div>
-                    <h1 class="font-serif text-2xl md:text-3xl font-semibold text-white/95 tracking-tight">
-                        🧪 UI 测试面板
-                    </h1>
-                    <p class="text-white/60 text-sm mt-1">macOS 毛玻璃风格 · 暗色桌面体验</p>
-                </div>
-                <!-- 此处不提供主题切换，保持纯暗色 -->
-                <div class="text-white/40 text-xs flex items-center gap-2">
-                    <span class="inline-block w-2 h-2 rounded-full bg-accent"></span>
-                    系统强调色 #0a84ff
-                </div>
-            </header>
+<div id="chat">
+  <div class="empty">
+    <div class="empty-icon">🔮</div>
+    <div>正在寻找后端服务...</div>
+  </div>
+</div>
 
-            <!-- 卡片网格 第一行 (三列) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+<div class="input-wrap">
+  <input id="msg-input" placeholder="输入消息..." disabled onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}">
+  <button id="send-btn" onclick="send()" disabled>发送</button>
+</div>
 
-                <!-- 卡片 1: 按钮交互 -->
-                <div class="bg-[#2c2c2e] border border-white/8 rounded-xl p-4 md:p-5 shadow-[0_1px_0_rgba(255,255,255,0.05)]">
-                    <h3 class="font-serif text-lg md:text-xl font-semibold text-white/95 mb-1">🔘 按钮交互</h3>
-                    <p class="text-white/60 text-sm mb-4">点击按钮触发反馈</p>
-                    <div class="flex flex-wrap gap-2">
-                        <button id="clickBtn" class="bg-[#3a3a3c] text-white/90 rounded-lg px-4 py-2 text-sm font-medium hover:bg-white/10 transition-colors duration-200">
-                            点击我
-                        </button>
-                        <button id="resetBtn" class="bg-transparent text-white/70 rounded-lg px-4 py-2 text-sm font-medium border border-white/10 hover:bg-white/5 transition-colors duration-200">
-                            重置
-                        </button>
-                        <button id="errorBtn" class="bg-transparent text-white/70 rounded-lg px-4 py-2 text-sm font-medium border border-white/10 hover:bg-white/5 transition-colors duration-200">
-                            ❌ 出错
-                        </button>
-                    </div>
-                    <div id="feedbackMessage" class="feedback bg-[#1c1c1e] rounded-lg px-4 py-3 mt-4 text-sm text-white/80 min-h-[3rem] border border-white/5">
-                        等待操作…
-                    </div>
-                </div>
-
-                <!-- 卡片 2: 表单元素 (含优化下拉框) -->
-                <div class="bg-[#2c2c2e] border border-white/8 rounded-xl p-4 md:p-5 shadow-[0_1px_0_rgba(255,255,255,0.05)]">
-                    <h3 class="font-serif text-lg md:text-xl font-semibold text-white/95 mb-1">📝 表单元素</h3>
-                    <p class="text-white/60 text-sm mb-4">输入框、下拉选择</p>
-                    <div class="space-y-3">
-                        <div>
-                            <label for="nameInput" class="block text-white/70 text-xs font-medium mb-1">姓名</label>
-                            <input type="text" id="nameInput" placeholder="例如：张三"
-                                   class="w-full bg-[#1c1c1e] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/90 placeholder-white/30 focus:outline-none focus:border-white/25 transition-colors duration-200" />
-                        </div>
-                        <div>
-                            <label for="emailInput" class="block text-white/70 text-xs font-medium mb-1">邮箱</label>
-                            <input type="email" id="emailInput" placeholder="example@mail.com"
-                                   class="w-full bg-[#1c1c1e] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/90 placeholder-white/30 focus:outline-none focus:border-white/25 transition-colors duration-200" />
-                        </div>
-                        <div>
-                            <label for="roleSelect" class="block text-white/70 text-xs font-medium mb-1">角色</label>
-                            <select id="roleSelect"
-                                    class="w-full bg-[#1c1c1e] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/90 focus:outline-none focus:border-white/25 transition-colors duration-200 appearance-none">
-                                <option value="" disabled selected>-- 请选择 --</option>
-                                <option value="user">普通用户</option>
-                                <option value="admin">管理员</option>
-                                <option value="guest">访客</option>
-                            </select>
-                            <div class="text-white/50 text-xs mt-1 flex items-center gap-1">
-                                👉 当前选择：<span id="selectedRoleDisplay" class="text-white/90 font-medium">无</span>
-                            </div>
-                        </div>
-                        <button id="submitFormBtn" class="bg-[#3a3a3c] text-white/90 rounded-lg px-4 py-2 text-sm font-medium hover:bg-white/10 transition-colors duration-200 w-full">
-                            提交表单
-                        </button>
-                        <div id="formFeedback" class="feedback bg-[#1c1c1e] rounded-lg px-4 py-3 text-sm text-white/80 min-h-[3rem] border border-white/5">
-                            填写后点击提交
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 卡片 3: 视觉元素 (颜色样本 + 进度条) -->
-                <div class="bg-[#2c2c2e] border border-white/8 rounded-xl p-4 md:p-5 shadow-[0_1px_0_rgba(255,255,255,0.05)]">
-                    <h3 class="font-serif text-lg md:text-xl font-semibold text-white/95 mb-1">🎨 视觉元素</h3>
-                    <p class="text-white/60 text-sm mb-4">颜色样本与进度条</p>
-                    <div class="flex gap-2 flex-wrap mb-3">
-                        <span class="w-8 h-8 rounded-lg border border-white/10" style="background:#0a84ff;"></span>
-                        <span class="w-8 h-8 rounded-lg border border-white/10" style="background:#30d158;"></span>
-                        <span class="w-8 h-8 rounded-lg border border-white/10" style="background:#ff453a;"></span>
-                        <span class="w-8 h-8 rounded-lg border border-white/10" style="background:#ffd60a;"></span>
-                        <span class="w-8 h-8 rounded-lg border border-white/10" style="background:#bf5af2;"></span>
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-white/50 text-xs mb-1">
-                            <span>下载进度</span>
-                            <span id="progressLabel">30%</span>
-                        </div>
-                        <div class="w-full h-1.5 bg-[#1c1c1e] rounded-full overflow-hidden">
-                            <div id="progressFill" class="h-full bg-accent rounded-full transition-all duration-200 ease-out" style="width:30%;"></div>
-                        </div>
-                        <div class="flex gap-2 mt-3">
-                            <button id="progressBtn" class="bg-[#3a3a3c] text-white/90 rounded-lg px-3 py-1.5 text-xs font-medium hover:bg-white/10 transition-colors duration-200 flex-1">
-                                ▶ 增加
-                            </button>
-                            <button id="resetProgressBtn" class="bg-transparent text-white/70 rounded-lg px-3 py-1.5 text-xs font-medium border border-white/10 hover:bg-white/5 transition-colors duration-200 flex-1">
-                                ↺ 重置
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 卡片网格 第二行 (两列) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6">
-                <!-- 卡片 4: 列表与徽章 -->
-                <div class="bg-[#2c2c2e] border border-white/8 rounded-xl p-4 md:p-5 shadow-[0_1px_0_rgba(255,255,255,0.05)]">
-                    <h3 class="font-serif text-lg md:text-xl font-semibold text-white/95 mb-1">📦 卡片内容</h3>
-                    <p class="text-white/60 text-sm mb-3">列表样式与状态标签</p>
-                    <ul class="card-list space-y-1.5 pl-1">
-                        <li>• 响应式网格布局</li>
-                        <li>• 暗色主题适配</li>
-                        <li>• 1px 半透明边框</li>
-                    </ul>
-                    <span class="inline-block mt-3 bg-[#3a3a3c] text-white/80 text-[0.65rem] font-medium px-3 py-0.5 rounded-full border border-white/5">
-                        测试中
-                    </span>
-                </div>
-
-                <!-- 卡片 5: 状态切换 -->
-                <div class="bg-[#2c2c2e] border border-white/8 rounded-xl p-4 md:p-5 shadow-[0_1px_0_rgba(255,255,255,0.05)]">
-                    <h3 class="font-serif text-lg md:text-xl font-semibold text-white/95 mb-1">🔄 状态切换</h3>
-                    <p class="text-white/60 text-sm mb-4">点击切换模拟状态</p>
-                    <button id="toggleStateBtn" class="bg-[#3a3a3c] text-white/90 rounded-lg px-4 py-2 text-sm font-medium hover:bg-white/10 transition-colors duration-200">
-                        切换状态
-                    </button>
-                    <div id="stateFeedback" class="feedback bg-[#1c1c1e] rounded-lg px-4 py-3 mt-4 text-sm text-white/80 min-h-[3rem] border border-white/5">
-                        当前状态：正常
-                    </div>
-                </div>
-            </div>
-
-            <!-- 页脚 -->
-            <footer class="mt-12 pt-6 border-t border-white/8 text-white/40 text-xs text-center">
-                <p>UI 测试 · macOS 毛玻璃风格 · 部署于 GitHub Pages · 2026</p>
-            </footer>
-
-        </div>
+<div class="modal-overlay" id="conn-modal">
+  <div class="modal">
+    <h3>连接后端</h3>
+    <p>无法自动发现后端地址，请手动输入当前隧道地址</p>
+    <input id="manual-url" placeholder="https://xxx.trycloudflare.com/v1">
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="retryAuto()">重试自动</button>
+      <button class="btn-primary" onclick="manualConnect()">连接</button>
     </div>
+  </div>
+</div>
 
-    <!-- JavaScript 交互逻辑 -->
-    <script>
-        (function() {
-            "use strict";
+<script>
+// ==================== 配置 ====================
+// 从 Gist 读取后端地址，替换为你的 Gist ID
+const GIST_ID = 'YOUR_GIST_ID_HERE';
 
-            // DOM 元素
-            const feedback = document.getElementById('feedbackMessage');
-            const clickBtn = document.getElementById('clickBtn');
-            const resetBtn = document.getElementById('resetBtn');
-            const errorBtn = document.getElementById('errorBtn');
+// 备用地址列表（按优先级）
+const FALLBACKS = [
+  'http://192.168.1.5:8787/v1',
+  'http://127.0.0.1:8787/v1',
+];
 
-            const formFeedback = document.getElementById('formFeedback');
-            const submitFormBtn = document.getElementById('submitFormBtn');
-            const nameInput = document.getElementById('nameInput');
-            const emailInput = document.getElementById('emailInput');
-            const roleSelect = document.getElementById('roleSelect');
-            const selectedRoleDisplay = document.getElementById('selectedRoleDisplay');
+let BASE = null;
+let messages = [{"role":"system","content":"You are a helpful assistant."}];
+let isStreaming = false;
 
-            const progressFill = document.getElementById('progressFill');
-            const progressLabel = document.getElementById('progressLabel');
-            const progressBtn = document.getElementById('progressBtn');
-            const resetProgressBtn = document.getElementById('resetProgressBtn');
+const chat = document.getElementById('chat');
+const msgInput = document.getElementById('msg-input');
+const sendBtn = document.getElementById('send-btn');
+const statusDot = document.getElementById('status-dot');
+const statusText = document.getElementById('status-text');
+const connModal = document.getElementById('conn-modal');
 
-            const toggleStateBtn = document.getElementById('toggleStateBtn');
-            const stateFeedback = document.getElementById('stateFeedback');
+async function init() {
+  if (GIST_ID && GIST_ID !== 'YOUR_GIST_ID_HERE') {
+    try {
+      const resp = await fetch(`https://gist.githubusercontent.com/raw/${GIST_ID}/endpoint.txt?t=${Date.now()}`, {
+        signal: AbortSignal.timeout(8000)
+      });
+      const url = (await resp.text()).trim();
+      if (url && !url.includes('placeholder') && await testBackend(url)) {
+        setConnected(url);
+        return;
+      }
+    } catch(e) {}
+  }
+  for (const url of FALLBACKS) {
+    if (await testBackend(url)) {
+      setConnected(url);
+      return;
+    }
+  }
+  showModal();
+}
 
-            // ---------- 按钮交互 ----------
-            const setFeedback = (msg, type = '') => {
-                feedback.textContent = msg;
-                feedback.className = 'feedback bg-[#1c1c1e] rounded-lg px-4 py-3 text-sm text-white/80 min-h-[3rem] border border-white/5' + (type ? ' ' + type : '');
-            };
+async function testBackend(url) {
+  try {
+    const resp = await fetch(url.replace('/v1', '/v1/test'), {signal: AbortSignal.timeout(4000)});
+    return resp.ok;
+  } catch(e) { return false; }
+}
 
-            clickBtn.addEventListener('click', () => {
-                setFeedback('✅ 按钮被点击！当前时间：' + new Date().toLocaleTimeString(), 'success');
-            });
+function setConnected(url) {
+  BASE = url;
+  statusDot.classList.add('online');
+  statusText.textContent = '已连接';
+  statusText.style.color = 'var(--success)';
+  msgInput.disabled = false;
+  sendBtn.disabled = false;
+  chat.innerHTML = '';
+  appendAssistant('已连接到后端，可以开始对话了。');
+  msgInput.focus();
+}
 
-            resetBtn.addEventListener('click', () => {
-                setFeedback('🔄 已重置反馈信息', '');
-            });
+function showModal() {
+  connModal.classList.add('show');
+  setTimeout(() => document.getElementById('manual-url').focus(), 100);
+}
+function hideModal() { connModal.classList.remove('show'); }
+function retryAuto() { hideModal(); chat.innerHTML = '<div class="empty"><div class="empty-icon">🔄</div><div>重新尝试连接...</div></div>'; init(); }
 
-            errorBtn.addEventListener('click', () => {
-                setFeedback('❌ 模拟错误：发生了异常情况', 'error');
-            });
+function manualConnect() {
+  const url = document.getElementById('manual-url').value.trim();
+  if (!url) return;
+  let finalUrl = url;
+  if (!finalUrl.endsWith('/v1')) finalUrl += '/v1';
+  testBackend(finalUrl).then(ok => {
+    if (ok) { hideModal(); setConnected(finalUrl); }
+    else { alert('无法连接到此地址，请确认后端已启动'); }
+  });
+}
 
-            // ---------- 下拉框实时显示 ----------
-            roleSelect.addEventListener('change', function() {
-                if (this.value) {
-                    selectedRoleDisplay.textContent = this.options[this.selectedIndex].text;
-                } else {
-                    selectedRoleDisplay.textContent = '无';
-                }
-            });
+function appendUser(text) {
+  const div = document.createElement('div');
+  div.className = 'msg user';
+  div.innerHTML = `<div class="msg-bubble">${escapeHtml(text)}</div><div class="msg-time">${fmtTime()}</div>`;
+  chat.appendChild(div);
+  scrollToBottom();
+}
 
-            // ---------- 表单提交（含校验） ----------
-            submitFormBtn.addEventListener('click', () => {
-                const name = nameInput.value.trim() || '未填写';
-                const email = emailInput.value.trim() || '未填写';
-                const roleValue = roleSelect.value;
+function appendAssistant(text) {
+  const div = document.createElement('div');
+  div.className = 'msg assistant';
+  div.innerHTML = `<div class="msg-bubble">${formatText(text)}</div><div class="msg-time">${fmtTime()}</div>`;
+  chat.appendChild(div);
+  scrollToBottom();
+  return div;
+}
 
-                if (!roleValue) {
-                    formFeedback.textContent = '⚠️ 请先选择一个角色！';
-                    formFeedback.className = 'feedback bg-[#1c1c1e] rounded-lg px-4 py-3 text-sm text-white/80 min-h-[3rem] border border-white/5 error';
-                    return;
-                }
+function appendTyping() {
+  const div = document.createElement('div');
+  div.className = 'msg assistant';
+  div.id = 'typing-indicator';
+  div.innerHTML = `<div class="msg-bubble"><div class="typing"><span></span><span></span><span></span></div></div>`;
+  chat.appendChild(div);
+  scrollToBottom();
+}
 
-                const roleText = roleSelect.options[roleSelect.selectedIndex].text;
-                formFeedback.textContent = `📋 提交成功：${name} (${roleText})，邮箱 ${email}`;
-                formFeedback.className = 'feedback bg-[#1c1c1e] rounded-lg px-4 py-3 text-sm text-white/80 min-h-[3rem] border border-white/5 success';
-            });
+function removeTyping() {
+  const el = document.getElementById('typing-indicator');
+  if (el) el.remove();
+}
 
-            // 输入时重置反馈样式（辅助）
-            [nameInput, emailInput].forEach(el => {
-                el.addEventListener('input', () => {
-                    formFeedback.className = 'feedback bg-[#1c1c1e] rounded-lg px-4 py-3 text-sm text-white/80 min-h-[3rem] border border-white/5';
-                });
-            });
+function scrollToBottom() { chat.scrollTop = chat.scrollHeight; }
+function fmtTime() {
+  const d = new Date();
+  return `${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
 
-            // ---------- 进度条 ----------
-            let progress = 30;
-            const updateProgress = (value) => {
-                progress = Math.min(100, Math.max(0, value));
-                progressFill.style.width = progress + '%';
-                progressLabel.textContent = progress + '%';
-                if (progress >= 100) {
-                    progressFill.style.background = '#30d158'; // 完成绿色
-                } else {
-                    progressFill.style.background = '#0a84ff';
-                }
-            };
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
 
-            progressBtn.addEventListener('click', () => {
-                updateProgress(progress + 15);
-            });
+function formatText(text) {
+  let html = escapeHtml(text);
+  html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+  html = html.replace(/\n/g, '<br>');
+  return html;
+}
 
-            resetProgressBtn.addEventListener('click', () => {
-                updateProgress(0);
-            });
+async function send() {
+  if (isStreaming) return;
+  const text = msgInput.value.trim();
+  if (!text || !BASE) return;
 
-            // ---------- 状态切换 ----------
-            let stateIndex = 0;
-            const states = ['正常', '加载中', '已完成', '暂停'];
-            toggleStateBtn.addEventListener('click', () => {
-                stateIndex = (stateIndex + 1) % states.length;
-                const s = states[stateIndex];
-                stateFeedback.textContent = '当前状态：' + s;
-                stateFeedback.className = 'feedback bg-[#1c1c1e] rounded-lg px-4 py-3 text-sm text-white/80 min-h-[3rem] border border-white/5';
-                if (s === '已完成') {
-                    stateFeedback.classList.add('success');
-                } else if (s === '暂停') {
-                    stateFeedback.classList.add('error');
-                }
-                // 加载中或正常只保留基础样式
-            });
+  msgInput.value = '';
+  msgInput.disabled = true;
+  sendBtn.disabled = true;
+  isStreaming = true;
 
-            // 初始化进度显示
-            updateProgress(30);
+  appendUser(text);
+  messages.push({role: 'user', content: text});
+  appendTyping();
 
-            console.log('macOS 毛玻璃 UI 测试已加载。');
-        })();
-    </script>
+  let assistantDiv = null;
+  let fullText = '';
+
+  try {
+    const resp = await fetch(BASE + '/chat/completions', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({model: 'mystic-ai', messages: messages, stream: true})
+    });
+    if (!resp.ok) throw new Error('后端响应异常: ' + resp.status);
+
+    removeTyping();
+    assistantDiv = appendAssistant('');
+    const bubble = assistantDiv.querySelector('.msg-bubble');
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, {stream: true});
+      for (const line of chunk.split('\n')) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith('data:')) continue;
+        const data = trimmed.slice(5).trim();
+        if (data === '[DONE]') break;
+        try {
+          const json = JSON.parse(data);
+          const content = json.choices?.[0]?.delta?.content;
+          if (content) {
+            fullText += content;
+            bubble.innerHTML = formatText(fullText);
+            scrollToBottom();
+          }
+        } catch(e) {}
+      }
+    }
+    messages.push({role: 'assistant', content: fullText});
+  } catch (e) {
+    removeTyping();
+    if (assistantDiv) {
+      assistantDiv.querySelector('.msg-bubble').innerHTML = `<span style="color:var(--danger)">错误: ${escapeHtml(e.message)}</span>`;
+    } else {
+      appendAssistant(`错误: ${e.message}`);
+    }
+  }
+
+  isStreaming = false;
+  msgInput.disabled = false;
+  sendBtn.disabled = false;
+  msgInput.focus();
+}
+
+init();
+</script>
 </body>
 </html>
